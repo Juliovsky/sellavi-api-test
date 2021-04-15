@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+
+    <!-- 1) Define html tag to put orders in -->
+
+    <ul id="ordersList"></ul>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+
+      // 2) Choose html tag to put orders in
+
+      const refs = {
+        ordersList: document.querySelector("#ordersList"),
+      };
+
+      // 3) receive orders array from the backend
+
+      async function getOrders() {
+        const headers = {
+          "x-token": "3ebe6c-23d340-398bbc-97e590-a2d1f2",
+          accept: " application/json",
+        };
+
+        try {
+          await axios
+            .get("https://ru.sellavi.com/gateway/orders/1/0", {
+              headers: headers,
+            })
+            .then(
+              //  4) put array of orders in choosen tag
+              (response) =>
+                refs.ordersList.insertAdjacentHTML(
+                  "beforeend",
+                  createList(response)
+                )
+            );
+        } catch (err) {
+          console.log(err);
+        }
+      }
+      // 5) iteration function of an array  with orders to return html with orders
+      function createList(data) {
+        let res = data.reduce((acc, order) => {
+          return (
+            acc +
+            `<li class=order-item>
+            <p>Time of order : ${order.time}</p>
+            <p>Amount ${order.amount} RUB</p>
+            <p>Status of order is (${order.status})</p>
+       </li>`
+          );
+        }, "");
+        return res;
+      }
+      // 6) call the function
+
+      getOrders();
+    </script>
+  </body>
+</html>
